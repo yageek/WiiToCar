@@ -9,41 +9,53 @@ extern int AccZ;
   int srl_handle;
  unsigned char servo_avant;
   unsigned char servo_new;
+  unsigned char trame_avant[4];
     struct termios options;
     unsigned char trame[4];
+    extern int bouton_2;
+    extern int bouton_1;
 
 
 void LinkToCar(void *data){
     servo_avant = 0;
     servo_new = 2;
     unsigned char *ptr;
-    while(1){
+    int k;
+    for (k=0;k< 4;k++){
+        trame_avant[k] = 0x01;
+        
+    }
+        while(1){
 
         usleep(1000);
-       // printf("AccX :%i\n",AccX);
-        printf("AccY :%i\n",AccY);
+        printf("AccX :%i\n",AccX);
+        //printf("AccY :%i\n",AccY);
        // printf("AccZ :%i\n",AccZ);
 
         //on traite les données
         trame[0] = 0xBB;
-        //trame[2] = 0x00;
-        //trame[3] = 0x00;
+        trame[2] = 0x00;
+        trame[3] = 0x00;
+        
+        //Axe Y
+        if((AccY >= 95) & (AccY<= 110)  ) trame[1] = 0xF2; else if(AccY >= 111 & AccY <= 130)  trame[1] = 0xBC;
+        else if( (AccY >= 130) & (AccY <= 140))  trame[1] = 0x89;
         
 
-        if((AccY >= 95) & (AccY<= 110)  ) servo_new = 0xF2; else if(AccY >= 111 & AccY <= 130) servo_new = 0xBC;
-        else if( (AccY >= 130) & (AccY <= 140)) servo_new = 0x89; else servo_new = servo_avant;
+
+        //Bouton_2
+        if(bouton_2 == 1 & bouton_1 == 0) trame[2] = 0x01;
+        else  if(bouton_2 == 0 & bouton_1 == 1) trame[2] = 0x02;
+        else trame[2] = 0x00;
         int i;
-    
-        if(servo_new != servo_avant){
-            printf("Valeur changée : %x\n",servo_new );
-            servo_avant = servo_new;
-            trame[1]= servo_avant;
-            trame[2] = 0x00;
-            trame[3] = 0x00;
+        if(strcmp(trame,trame_avant)!=0){
+            printf("Valeur changée : %x\n",trame[1] );
+            memcpy(trame_avant,trame,sizeof(trame));
+          
     
    
         ptr= trame;
-        for (i=0; i<2;i++){
+        for (i=0; i<4;i++){
             
          int sended = write(srl_handle,ptr,1);
          usleep(100);

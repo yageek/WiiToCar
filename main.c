@@ -29,6 +29,8 @@ struct acc_cal wm_cal;
 int AccX;
 int AccY;
 int AccZ;
+int bouton_2;
+int bouton_1;
 char temp;
 int continuer;
 int main(int argc, char** argv) {
@@ -36,6 +38,7 @@ int main(int argc, char** argv) {
     AccX = 0;
     AccY = 0;
     AccZ = 0;
+    bouton_2 = 0;
     continuer = 1;
     bluetooth_adress = *BDADDR_ANY;
     Serial = NULL;
