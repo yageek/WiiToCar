@@ -27,26 +27,43 @@ void LinkToCar(void *data){
     }
         while(1){
 
-        usleep(1000);
+        usleep(10000);
         printf("AccX :%i\n",AccX);
         //printf("AccY :%i\n",AccY);
        // printf("AccZ :%i\n",AccZ);
 
         //on traite les données
         trame[0] = 0xBB;
-        trame[2] = 0x00;
-        trame[3] = 0x00;
+       
         
         //Axe Y
         if((AccY >= 95) & (AccY<= 110)  ) trame[1] = 0xF2; else if(AccY >= 111 & AccY <= 130)  trame[1] = 0xBC;
         else if( (AccY >= 130) & (AccY <= 140))  trame[1] = 0x89;
         
+        //bouton _2
 
+        if(bouton_2 == 1){
+            if (AccX > 120 ) {
+                trame[2] = 0x01;
+                trame[3] = 3.7*AccX*0.5 -529 ;
+            } else if(AccX < 118) {
+                trame[2] = 0x02;
+                trame[3] = 70;
+            }
+
+
+
+        } else{
+
+            trame[2] = 0x00;
+            trame[3] = 0x00;
+        }
 
         //Bouton_2
-        if(bouton_2 == 1 & bouton_1 == 0) trame[2] = 0x01;
+       /* if(bouton_2 == 1 & bouton_1 == 0) trame[2] = 0x01;
         else  if(bouton_2 == 0 & bouton_1 == 1) trame[2] = 0x02;
         else trame[2] = 0x00;
+         * */
         int i;
         if(strcmp(trame,trame_avant)!=0){
             printf("Valeur changée : %x\n",trame[1] );
@@ -58,7 +75,7 @@ void LinkToCar(void *data){
         for (i=0; i<4;i++){
             
          int sended = write(srl_handle,ptr,1);
-         usleep(100);
+         usleep(10000);
          ptr++;
          if (sended > 0) printf("Envoie OK !\n"); else printf("Erreur\n");
 
