@@ -45,7 +45,15 @@ void LinkToCar(void *data){
         if(bouton_2 == 1){
             if (AccX > 120 ) {
                 trame[2] = 0x01;
-                trame[3] = 3.7*AccX*0.5 -529 ;
+                trame[3] = 80 ;
+            }
+            if (AccX > 130 ) {
+                trame[2] = 0x01;
+                trame[3] = 100 ;
+            }if (AccX > 140 ) {
+                trame[2] = 0x01;
+                trame[3] = 125 ;
+
             } else if(AccX < 118) {
                 trame[2] = 0x02;
                 trame[3] = 70;
